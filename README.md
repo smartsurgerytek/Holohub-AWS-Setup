@@ -1,5 +1,5 @@
 # Holohub-AWS-Setup
-This repo contains every thing we need to setup the Holohub environment on AWS.
+This repo contains every thing we need to setup the Holohub environment on AWS and VS code environment for development.
 ## Step 1
 Follow this tutorial: https://github.com/nvidia-holoscan/holohub/tree/main/tutorials/holoscan-playground-on-aws
 
