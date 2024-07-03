@@ -60,6 +60,18 @@ xeyes
 ```
 You should see an X11 window popup on your local machine.
 ## Set up ~/.bashrc
+```bash
+vim ~/.bashrc
+```
+Add these lines to the end of the file:
+```bash
+nvidia_icd_json=$(find /usr/share /etc -path '*/vulkan/icd.d/nvidia_icd.json' -type f,l -print -quit 2>/dev/null | grep .) || (echo "nvidia_icd.json not found" >&2 && false)
+NGC_CONTAINER_IMAGE_PATH="nvcr.io/nvidia/clara-holoscan/holoscan:v2.2.0-dgpu"
+XSOCK=/tmp/.X11-unix
+XAUTH=/tmp/.docker.xauth
+# the error “file does not exist” is expected at the next command
+xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | sudo xauth -f $XAUTH nmerge -
+```
 ## Clone Holohub and Build Image
 ```bash
 cd ~
@@ -70,3 +82,52 @@ cd holohub
 sudo apt install docker-buildx-plugin
 ./dev_container build
 ```
+## Install the NVIDIA Container Toolkit
+Follow this instruction:
+https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+## Set up ~/.bashrc
+```bash
+vim ~/.bashrc
+```
+Add these lines to the end of the file:
+```bash
+HOLOHUB_IMAGE=holohub:ngc-v2.1.0-dgpu
+cd holohub
+```
+Restart bash
+## Run Container
+```bash
+docker run -it --net host \
+--gpus all \
+-v $XAUTH:$XAUTH \
+-v $XSOCK:$XSOCK \
+-v $nvidia_icd_json:$nvidia_icd_json:ro \
+-e XAUTHORITY=$XAUTH \
+-e NVIDIA_DRIVER_CAPABILITIES=graphics,video,compute,utility,display \
+-e DISPLAY \
+--ipc=host \
+--cap-add=CAP_SYS_PTRACE \
+--runtime=nvidia \
+--ulimit memlock=-1 \
+-v /etc/group:/etc/group:ro \
+-v /etc/passwd:/etc/passwd:ro \
+-v $PWD:/workspace/holohub \
+-w /workspace/holohub \
+--group-add video \
+$HOLOHUB_IMAGE
+```
+## Build Holohub Multi-AI Endoscopy Example
+Inside the Container, do this:
+```bash
+. run build multiai_endoscopy cpp
+. run launch multiai_endoscopy cpp
+```
+This may take a while, you will see a X window popup and the application running.
+
+## Setup Development Enviroment
+1. Install VSCode Remote Extension on local machine
+2. SSH into the AWS EC2 instance
+3. Install VSCode Docker extension on AWS EC2 instance
+4. Attach EC2 to the running container
+
+# Congradulation
