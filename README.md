@@ -59,3 +59,14 @@ sudo apt install -y x11-apps
 xeyes
 ```
 You should see an X11 window popup on your local machine.
+## Set up ~/.bashrc
+## Clone Holohub and Build Image
+```bash
+cd ~
+git clone https://github.com/nvidia-holoscan/holohub.git
+cd holohub
+```
+```bash
+sudo apt install docker-buildx-plugin
+./dev_container build
+```
