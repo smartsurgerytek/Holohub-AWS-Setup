@@ -130,4 +130,5 @@ This may take a while, you will see a X window popup and the application running
 3. Install VSCode Docker extension on AWS EC2 instance
 4. Attach EC2 to the running container
 
-# Congradulation
+# Congratulation
+Congratulation! You can start develop Holoscan apps on VSCode from your local machine.
